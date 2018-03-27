@@ -14,7 +14,7 @@
  * 6. server  -> browser  :完成认证或认证失败。
  * @param {object} options{
  *    preprocessor:{
- *       fetch:function(url, callback) callback = function(result){//一个用于生成指纹的加盐字符串}。
+ *       handle:function(url, callback) callback = function(result){//一个用于生成指纹的加盐字符串, 如果result=false，不再继续处理}。
  *    }
  * }
  * @constructor
@@ -37,7 +37,7 @@ const FingerAuth = function (options) {
 };
 FingerAuth.prototype.process = function () {
     const preprocessor = this.getPreprocessor();
-    preprocessor.fetch ? preprocessor.fetch(this.getUrl(), this.fetchCallback): fingerFetch(url, this.fetchCallback)
+    preprocessor.handle ? preprocessor.handle(this.getUrl(), this.fetchCallback): handle(url, this.fetchCallback)
 };
 
 
@@ -46,9 +46,15 @@ FingerAuth.getInstance = function () {
 };
 
 //private
-const fingerFetch = function (url, callback) {
+const handle = function (url, callback) {
     fetch(url).then(function(res){
-        500 === res.status 
+        if(400 < res.status){
+            callback(false)
+        } else{
+            return res.text();
+        }
+    }).then(function (text) {
+        callback(text)
     });
 
 }
