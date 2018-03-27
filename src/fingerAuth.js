@@ -48,7 +48,9 @@ FingerAuth.getInstance = function () {
 //private
 const fingerFetch = function (url, callback) {
     fetch(url).then(function(res){
+        500 === res.status 
     });
+
 }
 
 module.exports = FingerAuth;
